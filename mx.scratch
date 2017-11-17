@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+<ProjectName>C:\Users\fadhlika\Repos\STM32\Bootloader\\Bootloader</ProjectName>
+<CMSIS>..\Drivers\CMSIS</CMSIS>
+<HAL_Driver>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\CMSIS</HAL_Driver>
+
+<Toolchain>SW4STM32</Toolchain>
+<Version>0</Version>
+
+<filestoremove>
+	<file>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio_ex.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_crc.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim_ex.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_uart.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc_ex.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_dma.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cortex.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_pwr.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash_ex.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\CMSIS\Device\ST\STM32F1xx\Source\Templates\system_stm32f1xx.c</name>
+	   		<name>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\CMSIS\Device\ST\STM32F1xx\Source\Templates\gcc\startup_stm32f103xb.s</name>
+	</file>
+</filestoremove>
+
+<inctoremove>
+	<Aincludes>
+	   <include></include>
+    </Aincludes>
+	<Cincludes>
+	   		<include>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Inc</include>
+	   		<include>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy</include>
+	   		<include>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\CMSIS\Device\ST\STM32F1xx\Include</include>
+	   		<include>C:\Users\fadhlika\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.0\Drivers\CMSIS\Include</include>
+    </Cincludes>
+</inctoremove>
+
+<configs>
+  <config>
+    <name>Bootloader</name>				
+    <device>STM32F103C8Tx</device>		 
+    <heapSize>0x200</heapSize>
+    <stackSize>0x400</stackSize>
+    
+    	<board>custom</board>
+			
+    <usedDebug>true</usedDebug>
+    	<debugprobe>swd</debugprobe>
+    <optimization>6</optimization>
+    <icfloc>0</icfloc>
+    <Adefines>
+        <define></define>
+    </Adefines>   
+
+    <UsedFreeRTOS></UsedFreeRTOS>
+    <Aincludes>
+
+
+	    	<include></include>
+    </Aincludes>
+    <Cdefines>
+        <define>__weak=__attribute__((weak))</define>
+        <define>__packed=__attribute__((__packed__))</define>
+    </Cdefines>
+    <definestoremove>
+        <Adefines>
+            <define></define>
+        </Adefines>
+        <Cdefines>
+            <define>USE_FULL_LL_DRIVER</define>
+            <define>MBEDTLS_CONFIG_FILE=&quot;mbedtls_config.h&quot;</define>
+            <define>_TIMEVAL_DEFINED</define>
+            <define>_SYS_TIME_H_</define>
+        </Cdefines>         
+    </definestoremove>
+    
+	<Cincludes>
+	   <include>..\Inc</include>
+	   <include>..\Drivers\STM32F1xx_HAL_Driver\Inc</include>
+	   <include>..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy</include>
+	   <include>..\Drivers\CMSIS\Device\ST\STM32F1xx\Include</include>
+	   <include>..\Drivers\CMSIS\Include</include>
+
+    </Cincludes>
+      </config>
+    </configs> 
+
+    <underRoot>true</underRoot>
+    	<copyAsReference>false</copyAsReference>
+	  		<sourceEntries>
+		    	<sourceEntry>
+		    		<name>Inc</name>
+		    	</sourceEntry>
+		    	<sourceEntry>
+		    		<name>Src</name>
+		    	</sourceEntry>
+		    	<sourceEntry>
+		    		<name>Drivers</name>
+		    	</sourceEntry>
+		    </sourceEntries>
+
+</Project>
