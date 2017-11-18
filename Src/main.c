@@ -43,6 +43,7 @@
 /* USER CODE BEGIN Includes */
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -90,7 +91,7 @@ int main(void)
 
   /* USER CODE END Init */
 
-  /* Configure the system clock */
+  /* xConfigure the system clock */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
@@ -115,7 +116,7 @@ int main(void)
 
   //CRC variable
   uint32_t crcValue;
-  uint32_t crcExpected;
+  uint32_t crcExpected = 0x00000000;
 
   uint8_t cmd = 0x00;;
 
@@ -140,14 +141,7 @@ int main(void)
   		sprintf(buf, "Received %lu bytes image\n", --NbrOfByte);
   		HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), 1000);
 
-  		/*Receive CRC32 to verify image---------------------------------------------------*/
-  		uint8_t crc[4];
-  		if(HAL_UART_Receive(&huart1, &crc, 4, 2000) == HAL_OK){
-  			 crcExpected = crc[0] << 24 | crc[1] << 16 | crc[2] << 8 | crc[3];
-  		}
-  		/*--------------------------------------------------------------------------------------------------------------*/
-
-  		/* Convert uint8_t image buffer to uint32_t image buffer--------------------------------------------------------*/
+  	  /* Convert uint8_t image buffer to uint32_t image buffer--------------------------------------------------------*/
   		/*Initialize buffer for WORD size image*/
   		image32 = (uint32_t*)calloc(NbrOfByte/4, sizeof(uint32_t));
 
@@ -161,23 +155,29 @@ int main(void)
   		free(image_buffer);
   		/*--------------------------------------------------------------------------------------------------------------*/
 
+  		/*Receive CRC32 to verify image---------------------------------------------------*/
+  		uint8_t crc[4];
+  		if(HAL_UART_Receive(&huart1, (uint8_t*)crc, 4, 2000) == HAL_OK){
+  			 crcExpected = crc[0] << 24 | crc[1] << 16 | crc[2] << 8 | crc[3];
+  		}
+  		/*--------------------------------------------------------------------------------------------------------------*/
+
   		/*Verify image--------------------------------------------------------------------------------------------------*/
   		crcValue = HAL_CRC_Calculate(&hcrc, image32, NbrOfByte/4);
 
   		if(crcValue != crcExpected)
   		{
   			HAL_UART_Transmit(&huart1, (uint8_t*)"Image corrupted\n", 16, 1000);
-  		} else {
-  			HAL_UART_Transmit(&huart1, (uint8_t*)"Flashing\n", 16, 1000);
+  			break;
   		}
   		/*---------------------------------------------------------------------------------------------------------------*/
 
   		/*Flash image to main memory-------------------------------------------------------------------------------------*/
-  		/*Unlok flash memory*/
+  		/*Unlock flash memory*/
   		HAL_FLASH_Unlock();
 
   		/*Calculate number of page*/
-  		NbrOfPage = ((((uint32_t)(START_ADDRESS + NbrOfByte)) - START_ADDRESS)/PAGE_SIZE) + 1;
+  		NbrOfPage = (int)ceil(((((uint32_t)(START_ADDRESS + NbrOfByte)) - START_ADDRESS)/PAGE_SIZE));
 
   		/*Clear pending flag*/
   		__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
@@ -185,25 +185,29 @@ int main(void)
 
   		/*Erase the flash page*/
   		uint32_t pageError;
+  		HAL_StatusTypeDef status;
   		FLASH_EraseInitTypeDef pEraseInit;
   		pEraseInit.Banks = 0;
   		pEraseInit.NbPages = NbrOfPage;
   		pEraseInit.TypeErase = FLASH_TYPEERASE_PAGES;
   		pEraseInit.PageAddress = START_ADDRESS;
-  		__IO HAL_StatusTypeDef status = HAL_FLASHEx_Erase(&pEraseInit, &pageError);
+  		status = HAL_FLASHEx_Erase(&pEraseInit, &pageError);
+
 
   		if(status == HAL_OK){
   			/*Flash*/
-  			 uint32_t address = START_ADDRESS;
-  			 int index = 0;
-  			 while(index < NbrOfByte/4){
-  				 sprintf(buf, "Flash 0x%08x\r\n", address);
-  			 	 HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), 1000);
+  			uint32_t address = START_ADDRESS;
+  			int index = 0;
+  			while(index < NbrOfByte/4){
+  			 sprintf(buf, "Flash 0x%08lx\r\n", address);
+  			 HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), 1000);
 
-  			 	 __IO HAL_StatusTypeDef status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, image32[index++]);
-  			 	 address += 4;
-  			 }
+  			 HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, image32[index++]);
+  			 address += 4;
+  			}
   		}
+
+			free(image32);
 
   		HAL_FLASH_Lock();
   		/*--------------------------------------------------------------------------------------------------------------*/
@@ -212,8 +216,13 @@ int main(void)
   }
 
   /*Jump to application-----------------------------------------------------------------------*/
-  sprintf(buf, "Received command 0x%02x\nLoad application\n", cmd);
-  HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), 1000);
+  HAL_UART_Transmit(&huart1, (uint8_t*)"Load application\n", 18, 1000);
+
+  HAL_UART_DeInit(&huart1);
+  HAL_CRC_DeInit(&hcrc);
+  HAL_GPIO_DeInit(GPIOC, GPIO_PIN_12);
+  HAL_RCC_DeInit();
+  HAL_DeInit();
 
   JumpToApplication = (pFunction) (*(__IO uint32_t *)(APPLICATION_ADDRESS + 4));
   __set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS);
